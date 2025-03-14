@@ -1,3 +1,4 @@
+import statistics
 from abc import ABC, abstractmethod
 from calculator import Calculator
 from history_manager import HistoryManager
@@ -9,6 +10,7 @@ class Command(ABC):
     def execute(self):
         pass
 
+# Arithmetic Operations
 class AddCommand(Command):
     def __init__(self, calculator: Calculator, x, y):
         self.calculator = calculator
@@ -45,6 +47,36 @@ class DivideCommand(Command):
     def execute(self):
         return self.calculator.divide(self.x, self.y)
 
+# Statistics Commands
+class MeanCommand(Command):
+    def __init__(self, numbers):
+        self.numbers = numbers
+
+    def execute(self):
+        return statistics.mean(self.numbers)
+
+class MedianCommand(Command):
+    def __init__(self, numbers):
+        self.numbers = numbers
+
+    def execute(self):
+        return statistics.median(self.numbers)
+
+class VarianceCommand(Command):
+    def __init__(self, numbers):
+        self.numbers = numbers
+
+    def execute(self):
+        return statistics.variance(self.numbers)
+
+class StdDevCommand(Command):
+    def __init__(self, numbers):
+        self.numbers = numbers
+
+    def execute(self):
+        return statistics.stdev(self.numbers)
+
+# History Management Commands
 class HistoryCommand(Command):
     def __init__(self, history_manager: HistoryManager):
         self.history_manager = history_manager
@@ -60,6 +92,7 @@ class ClearHistoryCommand(Command):
         self.history_manager.clear_history()
         return "Calculation history cleared."
 
+# Invoker to Execute Commands
 class CommandInvoker:
     """Invoker class to execute commands."""
     
