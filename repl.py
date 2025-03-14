@@ -1,43 +1,86 @@
-import logging
-from calculator import Calculator, list_plugins
+import cmd
+from commands import Calculator
 
-def repl():
-    calculator = Calculator()
-    print("Welcome to the CLI Calculator. Type 'exit' to quit.")
+class CalculatorREPL(cmd.Cmd):
+    intro = "Welcome to the Calculator REPL. Type 'help' to list commands."
+    prompt = "calc> "
     
-    while True:
-        command = input("calc> ").strip().lower()
-        if command == "exit":
-            break
-        elif command == "menu":
-            print("Available commands: add, subtract, multiply, divide, plugins")
-            print("Available plugins:", list_plugins())
-            continue
-        
+    def __init__(self):
+        super().__init__()
+        self.calculator = Calculator()
+    
+    def do_add(self, arg):
+        "Add two numbers: add 3 5"
         try:
-            parts = command.split()
-            if len(parts) < 3:
-                raise ValueError("Invalid input. Use format: operation number number")
-            
-            operation = parts[0]
-            args = [float(x) for x in parts[1:]]
-            
-            if operation == "add":
-                print(calculator.add(*args))
-            elif operation == "subtract":
-                print(calculator.subtract(*args))
-            elif operation == "multiply":
-                print(calculator.multiply(*args))
-            elif operation == "divide":
-                print(calculator.divide(*args))
-            elif operation in calculator.PLUGINS:
-                print(calculator.execute_plugin(operation, *args))
-            else:
-                print("Unknown command")
-        except Exception as e:
-            logging.error(f"Error processing command: {e}")
-            print("Error: Invalid input.")
+            a, b = map(float, arg.split())
+            result = self.calculator.add(a, b)
+            print(f"Result: {result}")
+        except ValueError:
+            print("Error: Provide two numeric values.")
+    
+    def do_subtract(self, arg):
+        "Subtract two numbers: subtract 10 4"
+        try:
+            a, b = map(float, arg.split())
+            result = self.calculator.subtract(a, b)
+            print(f"Result: {result}")
+        except ValueError:
+            print("Error: Provide two numeric values.")
+    
+    def do_multiply(self, arg):
+        "Multiply two numbers: multiply 6 7"
+        try:
+            a, b = map(float, arg.split())
+            result = self.calculator.multiply(a, b)
+            print(f"Result: {result}")
+        except ValueError:
+            print("Error: Provide two numeric values.")
+    
+    def do_divide(self, arg):
+        "Divide two numbers: divide 8 2"
+        try:
+            a, b = map(float, arg.split())
+            result = self.calculator.divide(a, b)
+            print(f"Result: {result}")
+        except ValueError:
+            print("Error: Provide two numeric values.")
+        except ZeroDivisionError:
+            print("Error: Cannot divide by zero.")
+    
+    def do_mean(self, arg):
+        "Calculate the mean of a list of numbers: mean 1 2 3 4 5"
+        try:
+            numbers = list(map(float, arg.split()))
+            result = self.calculator.mean(numbers)
+            print(f"Mean: {result}")
+        except ValueError:
+            print("Error: Provide numeric values.")
+    
+    def do_median(self, arg):
+        "Calculate the median of a list of numbers: median 1 2 3 4 5"
+        try:
+            numbers = list(map(float, arg.split()))
+            result = self.calculator.median(numbers)
+            print(f"Median: {result}")
+        except ValueError:
+            print("Error: Provide numeric values.")
+    
+    def do_mode(self, arg):
+        "Calculate the mode of a list of numbers: mode 1 1 2 3 4"
+        try:
+            numbers = list(map(float, arg.split()))
+            result = self.calculator.mode(numbers)
+            print(f"Mode: {result}")
+        except ValueError:
+            print("Error: Provide numeric values.")
+        except StatisticsError:
+            print("Error: No unique mode found.")
+    
+    def do_quit(self, arg):
+        "Exit the calculator REPL."
+        print("Goodbye!")
+        return True
 
 if __name__ == "__main__":
-    repl()
+    CalculatorREPL().cmdloop()
 
